@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'jazzmin',
 
     # Local apps
+    "apps.core.apps.CoreConfig",
+    "apps.users.apps.UsersConfig",
 
     # Django built-in apps
     "django.contrib.admin",

@@ -1,0 +1,1 @@
+python manage.py startapp core apps/core (create app)
