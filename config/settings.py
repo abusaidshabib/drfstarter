@@ -37,21 +37,35 @@ SIMPLE_JWT = {
 }
 
 INSTALLED_APPS = [
+    # Third-party apps
     "corsheaders",
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-
     "rest_framework",
     "rest_framework_simplejwt",
     "drf_spectacular",
     'drf_spectacular_sidecar',
     "django_celery_results",
     'django_celery_beat',
-    'django_extensions'
+    'django_extensions',
+    "drf_standardized_errors",
+    'jazzmin',
+
+    # Local apps
+
+    # Django built-in apps
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles"
+]
+
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.ScryptPasswordHasher",
 ]
 
 MIDDLEWARE = [
@@ -71,7 +85,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         'rest_framework.authentication.SessionAuthentication',
     ],
-    # 'EXCEPTION_HANDLER': 'authentication.exceptions.custom_exception_handler',
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     # "PAGE_SIZE": 100,
 }
