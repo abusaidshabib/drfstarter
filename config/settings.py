@@ -50,8 +50,8 @@ INSTALLED_APPS = [
     'jazzmin',
 
     # Local apps
-    "apps.core.apps.CoreConfig",
-    "apps.users.apps.UsersConfig",
+    'apps.core.apps.CoreConfig',
+    'apps.users.apps.UsersConfig',
 
     # Django built-in apps
     "django.contrib.admin",
@@ -61,6 +61,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles"
 ]
+
+AUTH_USER_MODEL = "users.MyUser"
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
