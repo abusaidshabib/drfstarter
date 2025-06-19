@@ -1,1 +1,5 @@
 python manage.py startapp core apps/core (create app)
+python manage.py makemigrations (django migrations)
+python manage.py migrate (django migrate)
+python manage.py createsuperuser (django createsuperuser)
+python manage.py runserver (run django)
