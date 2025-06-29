@@ -38,7 +38,3 @@ myproject/
 ├── .env # Environment variables (never commit in production)
 ├── .gitignore
 └── README.md
-
-CREATE DATABASE dbname;
-CREATE USER dbname WITH PASSWORD '123456';
-GRANT ALL PRIVILEGES ON DATABASE dbname TO dbname;
