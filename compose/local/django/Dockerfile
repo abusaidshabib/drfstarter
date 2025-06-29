@@ -59,3 +59,16 @@ COPY --from=python-build-stage /usr/src/app/wheels /wheels/
 # use wheels to install python dependencies
 RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
   && rm -rf /wheels/
+
+COPY ./.scripts/entrypoint.sh /entrypoint
+RUN sed -i 's/\r$//g' /entrypoint
+RUN chmod +x /entrypoint
+
+COPY ./.scripts/start.sh /start
+RUN sed -i 's/\r$//g' /start
+RUN chmod +x /start
+
+# copy application code to WORKDIR
+COPY . ${APP_HOME}
+
+ENTRYPOINT ["/entrypoint"]
