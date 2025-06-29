@@ -9,8 +9,8 @@ env = environ.Env(DEBUG=(bool, False))
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-DEBUG = env.bool('DJ_DEBUG')
-SECRET_KEY = env('DJ_SECRET_KEY')
+DEBUG = env.bool('DJANGO_DEBUG')
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 APP_VERSION = env("API_VERSION")
 
 MEDIA_URL = '/media/'
@@ -19,13 +19,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-ALLOWED_HOSTS = env.list('DJ_ALLOW_HOST')
+ALLOWED_HOSTS = env.list('DJANGO_ALLOW_HOST')
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = env.list('DJ_CORS_ALLOWED_ORIGINS')
-CSRF_TRUSTED_ORIGINS = env.list('DJ_CSRF_TRUSTED_ORIGINS')
+CORS_ALLOWED_ORIGINS = env.list('DJANGO_CORS_ALLOWED_ORIGINS')
+CSRF_TRUSTED_ORIGINS = env.list('DJANGO_CSRF_TRUSTED_ORIGINS')
 CORS_ALLOWED_ORIGIN_REGEXES = env.list(
-    'DJ_CORS_ALLOWED_ORIGIN_REGEXES')
+    'DJANGO_CORS_ALLOWED_ORIGIN_REGEXES')
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
@@ -134,12 +134,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": env("DJ_DB_ENGINE"),
-        "NAME": env("DJ_DB_NAME"),
-        "USER": env("DJ_DB_USER"),
-        "PASSWORD": env("DJ_DB_PASSWORD"),
-        "HOST": env("DJ_DB_HOST"),
-        "PORT": env("DJ_DB_PORT"),
+        "ENGINE": env("POSTGRES_ENGINE"),
+        "NAME": env("POSTGRES_DB"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
+        "HOST": env("POSTGRES_HOST"),
+        "PORT": env("POSTGRES_PORT"),
     }
 }
 

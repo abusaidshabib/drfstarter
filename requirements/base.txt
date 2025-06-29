@@ -14,7 +14,6 @@ Django==5.2.3
 django-celery-beat==2.8.1
 django-cors-headers==4.7.0
 django-environ==0.12.0
-django-extensions==4.1
 django-jazzmin==3.0.1
 django-timezone-field==7.1
 django_celery_results==2.6.0
@@ -23,7 +22,6 @@ djangorestframework_simplejwt==5.5.0
 drf-spectacular==0.28.0
 drf-spectacular-sidecar==2025.6.1
 drf-standardized-errors==0.15.0
-gunicorn==23.0.0
 inflection==0.5.1
 jsonschema==4.24.0
 jsonschema-specifications==2025.4.1
@@ -31,7 +29,6 @@ kombu==5.5.4
 packaging==25.0
 pillow==11.2.1
 prompt_toolkit==3.0.51
-psycopg2-binary==2.9.10
 PyJWT==2.9.0
 python-crontab==3.2.0
 python-dateutil==2.9.0.post0
