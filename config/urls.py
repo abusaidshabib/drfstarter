@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.conf import settings
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from django.conf.urls.static import static
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 apidoc = [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
@@ -15,6 +16,9 @@ apidoc = [
 urlpatterns = [
     path("admin/", admin.site.urls),
 ] + apidoc
+
+if settings.DEBUG:
+    urlpatterns += debug_toolbar_urls()
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

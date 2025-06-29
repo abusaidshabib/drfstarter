@@ -9,7 +9,7 @@ env = environ.Env(DEBUG=(bool, False))
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-DEBUG = env('DJ_DEBUG')
+DEBUG = env.bool('DJ_DEBUG')
 SECRET_KEY = env('DJ_SECRET_KEY')
 APP_VERSION = env("API_VERSION")
 
@@ -35,6 +35,10 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
 }
+
+DEBUGED_APPS = [
+    "debug_toolbar"
+]
 
 INSTALLED_APPS = [
     # Third-party apps
@@ -62,6 +66,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles"
 ]
 
+if DEBUG:
+    INSTALLED_APPS += DEBUGED_APPS
+
 AUTH_USER_MODEL = "users.MyUser"
 
 PASSWORD_HASHERS = [
@@ -81,6 +88,13 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+if DEBUG:
+    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+
+INTERNAL_IPS = [
+    "127.0.0.1",
 ]
 
 REST_FRAMEWORK = {
