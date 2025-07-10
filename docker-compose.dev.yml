@@ -1,0 +1,42 @@
+volumes:
+  pharmacy_local_postgres_data: {}
+  pharmacy_local_postgres_data_backups: {}
+  pharmacy_local_redis_data: {}
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: pharmacy_local_django
+    container_name: pharmacy_local_django
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - .:/app:z
+    env_file:
+      - .env
+    ports:
+      - "8001:8000"
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: postgres:16.8-alpine3.20
+    container_name: pharmacy_local_postgres
+    volumes:
+      - pharmacy_local_postgres_data:/var/lib/postgresql/data
+      - pharmacy_local_postgres_data_backups:/backups
+    env_file:
+      - .env
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: docker.io/redis:8.0
+    container_name: pharmacy_local_redis
+    volumes:
+      - pharmacy_local_redis_data:/data
