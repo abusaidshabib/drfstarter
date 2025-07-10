@@ -41,3 +41,5 @@ docker compose -f docker-compose.dev.yml down
 docker compose -f docker-compose.dev.yml up -d
 
 docker compose -f docker-compose.dev.yml exec -it django bash
+
+docker container stop $(docker container ls -aq) && docker container rm $(docker container ls -aq)

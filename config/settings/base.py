@@ -13,6 +13,7 @@ if READ_DOT_ENV_FILE:
     env.read_env(str(BASE_DIR / ".env"))
 
 # General settings
+DJANGO_SETTINGS_MODULE = env("DJANGO_SETTINGS_MODULE")
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 APP_VERSION = env("API_VERSION")
 DEBUG = False  # Override in dev.py or prod.py
