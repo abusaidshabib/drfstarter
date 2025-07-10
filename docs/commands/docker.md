@@ -25,3 +25,19 @@ docker run --name djboilar --env-file .env -p 8001:8001 djboilar
 docker stop djboilar
 
 docker rm djboilar
+
+docker compose -f docker-compose.dev.yml exec django python manage.py shell -c "from django.conf import settings; print(settings.DEBUG, settings.STATIC_URL)"
+
+docker compose -f docker-compose.dev.yml exec django python manage.py makemigrations
+docker compose -f docker-compose.dev.yml exec django python manage.py migrate
+
+docker compose -f docker-compose.dev.yml exec django python manage.py createsuperuser
+
+
+
+docker compose -f docker-compose.dev.yml up
+
+docker compose -f docker-compose.dev.yml down
+docker compose -f docker-compose.dev.yml up -d
+
+docker compose -f docker-compose.dev.yml exec -it django bash

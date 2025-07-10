@@ -12,3 +12,4 @@ docs/
 static/
 staticfiles
 mediafiles
+media/
