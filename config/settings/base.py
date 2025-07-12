@@ -203,8 +203,8 @@ LOGGING = {
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "pharmacy API",
-    "DESCRIPTION": "Documentation of API endpoints of pharmacy",
+    "TITLE": "medicixdrf API",
+    "DESCRIPTION": "Documentation of API endpoints of medicixdrf",
     "VERSION": "1.0.0",
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SCHEMA_PATH_PREFIX": "/api/",

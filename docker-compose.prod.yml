@@ -5,8 +5,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
-    image: pharmacy_prod_django
-    container_name: pharmacy_prod_django
+    image: djangoboilar_prod_django
+    container_name: djangoboilar_prod_django
     depends_on:
       postgres:
         condition: service_healthy
@@ -36,10 +36,10 @@ services:
 
   postgres:
     image: postgres:16.4-alpine3.20
-    container_name: pharmacy_prod_postgres
+    container_name: djangoboilar_prod_postgres
     volumes:
-      - pharmacy_prod_postgres_data:/var/lib/postgresql/data
-      - pharmacy_prod_postgres_data_backups:/backups
+      - djangoboilar_prod_postgres_data:/var/lib/postgresql/data
+      - djangoboilar_prod_postgres_data_backups:/backups
     env_file:
       - .env.prod
     environment:
@@ -61,9 +61,9 @@ services:
 
   redis:
     image: redis:8.0-alpine
-    container_name: pharmacy_prod_redis
+    container_name: djangoboilar_prod_redis
     volumes:
-      - pharmacy_prod_redis_data:/data
+      - djangoboilar_prod_redis_data:/data
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     env_file:
       - .env.prod
@@ -85,6 +85,6 @@ secrets:
     file: ./secrets/postgres_password.txt
 
 volumes:
-  pharmacy_prod_postgres_data:
-  pharmacy_prod_postgres_data_backups:
-  pharmacy_prod_redis_data:
+  djangoboilar_prod_postgres_data:
+  djangoboilar_prod_postgres_data_backups:
+  djangoboilar_prod_redis_data:

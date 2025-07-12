@@ -1,11 +1,10 @@
-
 services:
   django:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    image: pharmacy_local_django
-    container_name: pharmacy_local_django
+    image: djangoboilar_local_django
+    container_name: djangoboilar_local_django
     depends_on:
       postgres:
         condition: service_healthy
@@ -30,10 +29,10 @@ services:
 
   postgres:
     image: postgres:16.4-alpine3.20
-    container_name: pharmacy_local_postgres
+    container_name: djangoboilar_local_postgres
     volumes:
-      - pharmacy_local_postgres_data:/var/lib/postgresql/data
-      - pharmacy_local_postgres_data_backups:/backups
+      - djangoboilar_local_postgres_data:/var/lib/postgresql/data
+      - djangoboilar_local_postgres_data_backups:/backups
     env_file:
       - .env
     environment:
@@ -50,10 +49,10 @@ services:
 
   redis:
     image: redis:8.0-alpine
-    container_name: pharmacy_local_redis
+    container_name: djangoboilar_local_redis
     volumes:
-      - pharmacy_local_redis_data:/data
-    command: redis-server --appendonly yes  # Enable persistence
+      - djangoboilar_local_redis_data:/data
+    command: redis-server --appendonly yes # Enable persistence
     restart: on-failure
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -68,6 +67,6 @@ services:
         max-file: "3"
 
 volumes:
-  pharmacy_local_postgres_data:
-  pharmacy_local_postgres_data_backups:
-  pharmacy_local_redis_data:
+  djangoboilar_local_postgres_data:
+  djangoboilar_local_postgres_data_backups:
+  djangoboilar_local_redis_data:

@@ -8,22 +8,23 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_DEFAULT_TIMEOUT=100 \
     DJANGO_SETTINGS_MODULE=config.settings.dev
 
-
-# Install system dependencies (optional, based on your project needs)
-RUN apt-get update \
-    # dependencies for building Python packages
-    && apt-get install -y build-essential \
-    # psycopg dependencies
-    && apt-get install -y libpq-dev \
-    # Translations dependencies
-    && apt-get install -y gettext \
-    # Additional dependencies
-    && apt-get install -y git \
-    # cleaning up unused files
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-    && rm -rf /var/lib/apt/lists/*
-
+# set work directory early
 WORKDIR /app
+
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    gettext \
+    git || (apt-get update && apt-get install -y --fix-missing \
+    build-essential \
+    libpq-dev \
+    gettext \
+    git) && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 
 # Copy requirements and install
 COPY ./requirements ./requirements
@@ -31,18 +32,12 @@ RUN pip install --upgrade pip && \
     pip install -r requirements/local.txt
 
 COPY ./compose/local/django/entrypoint /entrypoint
-RUN sed -i 's/\r$//g' /entrypoint
-RUN chmod +x /entrypoint
-
 COPY ./compose/local/django/start /start
-RUN sed -i 's/\r$//g' /start
-RUN chmod +x /start
+RUN dos2unix /entrypoint /start || sed -i 's/\r$//g' /entrypoint /start \
+ && chmod +x /entrypoint /start
 
 # Copy project (optional, if not using bind mounts)
 COPY . /app/
-
-# Set work directory
-WORKDIR /app
 
 # Run Django dev server (use host=0.0.0.0 so it works inside Docker)
 ENTRYPOINT ["/entrypoint"]
