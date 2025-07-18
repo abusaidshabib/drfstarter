@@ -45,3 +45,5 @@ wcwidth==0.2.13
 whitenoise==6.9.0
 psycopg==3.2.4
 psycopg2-binary==2.9.10
+pytz==2025.2
+pandas
