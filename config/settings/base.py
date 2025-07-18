@@ -15,10 +15,12 @@ if READ_DOT_ENV_FILE:
 # General settings
 DJANGO_SETTINGS_MODULE = env("DJANGO_SETTINGS_MODULE")
 SECRET_KEY = env("DJANGO_SECRET_KEY")
-APP_VERSION = env("API_VERSION")
+API_VERSION = env("API_VERSION")
 DEBUG = False  # Override in dev.py or prod.py
 TIME_ZONE = "UTC"
 USE_TZ = True
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Django Admin
 ADMIN_URL = "admin/"
@@ -66,6 +68,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    "apps.users.middlewares.RequestAuditMiddleware"
 ]
 
 # URLs and WSGI
@@ -129,8 +133,17 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+    "DEFAULT_VERSION": API_VERSION,
+    "ALLOWED_VERSIONS": ["v1"],
+    "VERSION_PARAM": "version",
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
+}
+
+DRF_STANDARDIZED_ERRORS = {
+    "EXCEPTION_FORMATTER_CLASS": "apps.core.exceptions.CustomExceptionFormatter"
 }
 
 CORS_URLS_REGEX = r"^/api/.*$"
@@ -138,10 +151,11 @@ CORS_URLS_REGEX = r"^/api/.*$"
 
 # JWT settings
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=2),
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=500),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
+    'BLACKLIST_TOKEN_CHECKS': ['rest_framework_simplejwt.token_blacklist'],
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
 }
@@ -203,9 +217,9 @@ LOGGING = {
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "medicixdrf API",
-    "DESCRIPTION": "Documentation of API endpoints of medicixdrf",
-    "VERSION": "1.0.0",
+    "TITLE": "tamayuzdrf API",
+    "DESCRIPTION": "Documentation of API endpoints of tamayuzdrf",
+    "VERSION": API_VERSION,
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
-    "SCHEMA_PATH_PREFIX": "/api/",
+    "SCHEMA_PATH_PREFIX": f"/api/{API_VERSION}/",
 }

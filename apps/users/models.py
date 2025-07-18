@@ -34,3 +34,31 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return True
+
+
+class RequestAuditLog(models.Model):
+    user = models.ForeignKey(
+        MyUser, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='audit_logs', verbose_name="User"
+    )
+    ip_address = models.GenericIPAddressField(
+        null=True, blank=True, verbose_name="IP Address"
+    )
+    user_agent = models.TextField(blank=True, verbose_name="User Agent")
+    path = models.TextField(verbose_name="Path")
+    method = models.CharField(max_length=10, verbose_name="Method")
+    timestamp = models.DateTimeField(
+        auto_now_add=True, verbose_name="Timestamp")
+    status_code = models.IntegerField(
+        null=True, blank=True, verbose_name="Status Code")
+
+    def __str__(self):
+        return f"{self.user.email if self.user else 'Anonymous'} - {self.method} {self.path} ({self.status_code})"
+
+    class Meta:
+        verbose_name = "Request Audit Log"
+        verbose_name_plural = "Request Audit Logs"
+        indexes = [
+            models.Index(fields=['timestamp']),
+            models.Index(fields=['user', 'timestamp']),
+        ]
