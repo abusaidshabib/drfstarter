@@ -25,6 +25,11 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Update apt-get and install libglib2.0-0 (required by OpenCV)
+RUN apt-get update && apt-get install -y \
+    libgl1 \
+    libglib2.0-0 \
+ && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install
 COPY ./requirements ./requirements

@@ -30,7 +30,7 @@ def check_branch_permission(request, branch_id=None):
     branches = user.assigned_branches.all()
 
     if user.is_superuser:
-        company = Company.objects.filter(name="tamayuz").first()
+        company = Company.objects.filter(name="starter").first()
         branches = Branch.objects.all()
     elif user.is_owner:
         branches = Branch.objects.filter(company=company)
@@ -67,7 +67,7 @@ def check_camera_permission(request):
     branches = user.assigned_branches.all()
 
     if user.is_superuser:
-        company = Company.objects.filter(name="tamayuz").first()
+        company = Company.objects.filter(name="starter").first()
         branches = Branch.objects.all()
     elif user.is_owner:
         branches = Branch.objects.filter(company=company)

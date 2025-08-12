@@ -6,7 +6,7 @@ import environ
 # Initialize environment variables
 env = environ.Env()
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-APPS_DIR = BASE_DIR / "tamayuzdrf"
+APPS_DIR = BASE_DIR / "starterdrf"
 
 # Load .env file if specified
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE")
@@ -219,8 +219,8 @@ LOGGING = {
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "tamayuzdrf API",
-    "DESCRIPTION": "Documentation of API endpoints of tamayuzdrf",
+    "TITLE": "starterdrf API",
+    "DESCRIPTION": "Documentation of API endpoints of starterdrf",
     "VERSION": API_VERSION,
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SCHEMA_PATH_PREFIX": f"/api/{API_VERSION}/",

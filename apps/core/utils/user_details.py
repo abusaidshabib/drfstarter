@@ -13,7 +13,7 @@ def user_branches_company(request):
     branches = user.assigned_branches.all()
 
     if user.is_superuser:
-        company = Company.objects.filter(name="tamayuz").first()
+        company = Company.objects.filter(name="starter").first()
         branches = Branch.objects.all()
     elif user.is_owner:
         branches = Branch.objects.filter(company=company)
