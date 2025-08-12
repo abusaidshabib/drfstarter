@@ -1,0 +1,16 @@
+<p>Dear {{ user.name|default:user.email }},</p>
+
+<p>Thank you for purchasing a subscription!</p>
+
+<p><strong>Details:</strong></p>
+<ul>
+  <li>Amount Due: ${{ amount }}</li>
+  <li>Total Duration: {{ duration }} months</li>
+</ul>
+
+<p>
+  Once your payment is confirmed, we will send you a token to create your
+  company company.
+</p>
+
+<p>Regards,<br />Your App Team</p>

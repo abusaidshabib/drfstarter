@@ -1,0 +1,9 @@
+Hello {{ user.name }},
+
+Thank you for signing up! Please use the OTP below to complete your registration:
+
+OTP: {{ otp }}
+
+This code is valid for 10 minutes. If you did not initiate this request, please ignore this email.
+
+© {{ current_year }} YourCompany. All rights reserved.

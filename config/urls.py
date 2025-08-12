@@ -15,9 +15,11 @@ apidoc = [
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path(f'api/{settings.API_VERSION}/', include('apps.users.api.v1.urls')),
 ] + apidoc
 
 if settings.DEBUG:
+    from debug_toolbar.toolbar import debug_toolbar_urls
     urlpatterns += debug_toolbar_urls()
 
 if settings.DEBUG:

@@ -1,0 +1,3 @@
+Hello {{ user.get_full_name|default:user.username }},
+Your subscription token is: {{ token }}
+Use this token to complete your subscription process.

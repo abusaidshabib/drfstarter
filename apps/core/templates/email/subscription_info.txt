@@ -1,0 +1,12 @@
+Dear {{ user.get_full_name|default:user.email }},
+
+Thank you for purchasing a subscription!
+
+Details:
+- Amount Due: ${{ amount }}
+- Total Duration: {{ duration }} days
+
+Once your payment is confirmed, we will send you a token to create your company.
+
+Regards,
+Your App Team
