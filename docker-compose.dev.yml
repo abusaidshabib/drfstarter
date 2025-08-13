@@ -48,7 +48,7 @@ services:
       start_period: 10s
 
   redis:
-    image: redis:8.0-alpine
+    image: redis:7-alpine
     container_name: starterdrf_local_redis
     volumes:
       - starterdrf_local_redis_data:/data
@@ -59,6 +59,93 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: starterdrf_local_celery_worker
+    container_name: starterdrf_local_celery_worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: /start-celeryworker
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "celery", "-A", "config.celery", "inspect", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: starterdrf_local_celery_beat
+    container_name: starterdrf_local_celery_beat
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: /start-celerybeat
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "celery", "-A", "config.celery", "inspect", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  flower:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: starterdrf_local_celery_flower
+    container_name: starterdrf_local_celery_flower
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: /start-flower
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "celery", "-A", "config.celery", "inspect", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
       start_period: 10s
     logging:
       driver: "json-file"

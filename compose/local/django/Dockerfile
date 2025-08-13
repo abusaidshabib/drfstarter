@@ -12,24 +12,18 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /app
 
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    build-essential \
-    libpq-dev \
-    gettext \
-    git || (apt-get update && apt-get install -y --fix-missing \
-    build-essential \
-    libpq-dev \
-    gettext \
-    git) && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Update apt-get and install libglib2.0-0 (required by OpenCV)
-RUN apt-get update && apt-get install -y \
-    libgl1 \
-    libglib2.0-0 \
- && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+  # dependencies for building Python packages
+  && apt-get install -y build-essential \
+  # psycopg dependencies
+  && apt-get install -y libpq-dev \
+  # Translations dependencies
+  && apt-get install -y gettext \
+  # Additional dependencies
+  && apt-get install -y git \
+  # cleaning up unused files
+  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+  && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install
 COPY ./requirements ./requirements
@@ -40,6 +34,18 @@ COPY ./compose/local/django/entrypoint /entrypoint
 COPY ./compose/local/django/start /start
 RUN dos2unix /entrypoint /start || sed -i 's/\r$//g' /entrypoint /start \
  && chmod +x /entrypoint /start
+
+COPY ./compose/local/django/celery/worker/start /start-celeryworker
+RUN sed -i 's/\r$//g' /start-celeryworker
+RUN chmod +x /start-celeryworker
+
+COPY ./compose/local/django/celery/beat/start /start-celerybeat
+RUN sed -i 's/\r$//g' /start-celerybeat
+RUN chmod +x /start-celerybeat
+
+COPY ./compose/local/django/celery/flower/start /start-flower
+RUN sed -i 's/\r$//g' /start-flower
+RUN chmod +x /start-flower
 
 # Copy project (optional, if not using bind mounts)
 COPY . /app/
