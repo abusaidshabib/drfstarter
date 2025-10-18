@@ -3,8 +3,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
-    image: starterdrf_prod_django
-    container_name: starterdrf_prod_django
+    image: drfstarter_prod_django
+    container_name: drfstarter_prod_django
     depends_on:
       postgres:
         condition: service_healthy
@@ -14,7 +14,7 @@ services:
       - ./static:/app/static
       - ./media:/app/media
     env_file:
-      - .env.prod
+      - .env
     environment:
       - DJANGO_ENV=production
       - pb=${pb:-default_value}
@@ -34,10 +34,10 @@ services:
 
   postgres:
     image: postgres:16.4-alpine3.20
-    container_name: starterdrf_local_postgres
+    container_name: drfstarter_local_postgres
     volumes:
-      - starterdrf_local_postgres_data:/var/lib/postgresql/data
-      - starterdrf_local_postgres_data_backups:/backups
+      - drfstarter_local_postgres_data:/var/lib/postgresql/data
+      - drfstarter_local_postgres_data_backups:/backups
     env_file:
       - .env
     environment:
@@ -54,9 +54,9 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: starterdrf_local_redis
+    container_name: drfstarter_local_redis
     volumes:
-      - starterdrf_local_redis_data:/data
+      - drfstarter_local_redis_data:/data
     command: redis-server --appendonly yes # Enable persistence
     restart: on-failure
     healthcheck:
@@ -75,8 +75,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    image: starterdrf_local_celery_worker
-    container_name: starterdrf_local_celery_worker
+    image: drfstarter_local_celery_worker
+    container_name: drfstarter_local_celery_worker
     depends_on:
       postgres:
         condition: service_healthy
@@ -104,8 +104,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    image: starterdrf_local_celery_beat
-    container_name: starterdrf_local_celery_beat
+    image: drfstarter_local_celery_beat
+    container_name: drfstarter_local_celery_beat
     depends_on:
       postgres:
         condition: service_healthy
@@ -133,8 +133,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    image: starterdrf_local_celery_flower
-    container_name: starterdrf_local_celery_flower
+    image: drfstarter_local_celery_flower
+    container_name: drfstarter_local_celery_flower
     depends_on:
       postgres:
         condition: service_healthy
@@ -159,6 +159,6 @@ services:
         max-file: "3"
 
 volumes:
-  starterdrf_local_postgres_data:
-  starterdrf_local_postgres_data_backups:
-  starterdrf_local_redis_data:
+  drfstarter_local_postgres_data:
+  drfstarter_local_postgres_data_backups:
+  drfstarter_local_redis_data:
