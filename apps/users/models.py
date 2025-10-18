@@ -167,7 +167,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin, BaseModel):
         default=False, verbose_name="Token Valid")
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["name", "name_ar"]
+    
     company_create = models.BooleanField(
         default=False, verbose_name="Company Create Permission")
     branch_create = models.BooleanField(
