@@ -2,30 +2,35 @@ services:
   django:
     build:
       context: .
-      dockerfile: ./compose/local/django/Dockerfile
-    image: starterdrf_local_django
-    container_name: starterdrf_local_django
+      dockerfile: ./compose/production/django/Dockerfile
+    image: starterdrf_prod_django
+    container_name: starterdrf_prod_django
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     volumes:
-      - .:/app:z
+      - ./static:/app/static
+      - ./media:/app/media
     env_file:
-      - .env
+      - .env.prod
     environment:
+      - DJANGO_ENV=production
       - pb=${pb:-default_value}
-    ports:
-      - "5000:8000"
     command: /start
-    restart: on-failure
+    restart: always
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   postgres:
     image: postgres:16.4-alpine3.20
