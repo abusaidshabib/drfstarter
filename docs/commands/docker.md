@@ -105,6 +105,12 @@ python manage.py generate_fake_people_data
 python manage.py generate_fake_sentiment_data
 
 
-
+# delete all docker
+docker stop $(docker ps -aq)
+docker rm $(docker ps -aq)
+docker rmi $(docker images -q)
+docker volume prune -f
+docker network prune -f
+docker system prune -a --volumes -f
 
 

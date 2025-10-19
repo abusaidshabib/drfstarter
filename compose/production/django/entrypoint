@@ -4,14 +4,23 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+# Check if POSTGRES_USER is set, else use default
 if [ -z "${POSTGRES_USER}" ]; then
     base_postgres_image_default_user='postgres'
     export POSTGRES_USER="${base_postgres_image_default_user}"
 fi
+
+# Construct DATABASE_URL for PostgreSQL connection
 export DATABASE_URL="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
 
-wait-for-it "${POSTGRES_HOST}:${POSTGRES_PORT}" -t 30
+# Wait for the PostgreSQL service to be available using pg_isready (as an alternative to wait-for-it)
+until pg_isready -h "${POSTGRES_HOST}" -p "${POSTGRES_PORT}" -U "${POSTGRES_USER}"; do
+  echo "Waiting for PostgreSQL to be available..."
+  sleep 2
+done
 
+# Print confirmation once DB is available
 >&2 echo 'PostgreSQL is available'
 
+# Execute the provided command (start Django with Gunicorn in this case)
 exec "$@"

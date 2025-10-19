@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# Remove old PID file
+rm -f './celerybeat.pid'
+
+# Start Celery Beat with proper logging
+celery -A config beat -l INFO --detach --pidfile="./celerybeat.pid"

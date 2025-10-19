@@ -11,7 +11,6 @@ ENV PYTHONUNBUFFERED=1 \
 # set work directory early
 WORKDIR /app
 
-
 RUN apt-get update \
   # dependencies for building Python packages
   && apt-get install -y build-essential \

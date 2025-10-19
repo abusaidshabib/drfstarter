@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# Start Celery worker with logging and memory optimization
+celery -A config worker -l INFO --autoscale=10,3 --detach

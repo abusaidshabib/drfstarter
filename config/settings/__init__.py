@@ -8,7 +8,10 @@ env = environ.Env()
 env.read_env(BASE_DIR / ".env")
 
 DJANGO_ENV = env("DJANGO_ENV")
+settings_module = env('DJANGO_SETTINGS_MODULE', default='config.settings.dev')
 print("i'm working fine", DJANGO_ENV)
+print("i'm working fine", settings_module)
+
 
 if DJANGO_ENV == "production":
     from .prod import *

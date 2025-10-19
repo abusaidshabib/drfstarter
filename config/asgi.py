@@ -1,16 +1,23 @@
-"""
-ASGI config for config project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.1/howto/deployment/asgi/
-"""
-
 import os
+import environ
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.dev")
+env = environ.Env()
+environ.Env.read_env()
+
+settings_module = env('DJANGO_SETTINGS_MODULE', default='config.settings.dev')
+
+if settings_module is None or isinstance(settings_module, bytes):
+    settings_module = 'config.settings.dev'
+elif isinstance(settings_module, str):
+    pass
+else:
+    settings_module = 'config.settings.dev'
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
 
 application = get_asgi_application()
+
+
+print("asgi",settings_module)

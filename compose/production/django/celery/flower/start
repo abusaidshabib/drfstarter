@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+worker_ready() {
+    celery -A config inspect ping --timeout=10
+}
+
+until worker_ready; do
+  >&2 echo 'Waiting for Celery workers...'
+  sleep 1
+done
+
+>&2 echo 'Celery workers are available, starting Flower'
+
+# Start Flower for monitoring Celery
+celery -A config flower --broker="${CELERY_BROKER_URL}" --port=5555 --basic_auth="username:password" --detach

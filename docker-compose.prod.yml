@@ -1,12 +1,10 @@
-version: "3.8"
-
 services:
   django:
     build:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
-    image: starterdrf_prod_django
-    container_name: starterdrf_prod_django
+    image: drfstarter_production_django
+    container_name: drfstarter_production_django
     depends_on:
       postgres:
         condition: service_healthy
@@ -16,14 +14,17 @@ services:
       - ./static:/app/static # Mount static files for serving
       - ./media:/app/media # Mount media files
     env_file:
-      - .env.prod
+      - .env.prod # Load environment variables from .env.prod
     environment:
       - DJANGO_ENV=production
       - pb=${pb:-default_value}
+      - DJANGO_SETTINGS_MODULE=config.settings.prod
+    ports:
+      - "5000:8000"
     command: /start
     restart: always
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -36,16 +37,18 @@ services:
 
   postgres:
     image: postgres:16.4-alpine3.20
-    container_name: starterdrf_prod_postgres
+    container_name: drfstarter_production_postgres
     volumes:
-      - starterdrf_prod_postgres_data:/var/lib/postgresql/data
-      - starterdrf_prod_postgres_data_backups:/backups
+      - drfstarter_production_postgres_data:/var/lib/postgresql/data
+      - drfstarter_production_postgres_data_backups:/backups
     env_file:
-      - .env.prod
+      - .env.prod # Use .env.prod to pass in the environment variables
     environment:
-      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
-    secrets:
-      - postgres_password
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD} # Directly use the POSTGRES_PASSWORD from .env.prod
+      - POSTGRES_USER=${POSTGRES_USER} # Use the POSTGRES_USER from .env.prod
+      - POSTGRES_DB=${POSTGRES_DB} # Use the POSTGRES_DB from .env.prod
+      - POSTGRES_HOST=${POSTGRES_HOST} # Use the POSTGRES_HOST from .env.prod
+      - POSTGRES_PORT=${POSTGRES_PORT} # Use the POSTGRES_PORT from .env.prod
     restart: always
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-postgres}"]
@@ -61,15 +64,17 @@ services:
 
   redis:
     image: redis:8.0-alpine
-    container_name: starterdrf_prod_redis
+    container_name: drfstarter_production_redis
     volumes:
-      - starterdrf_prod_redis_data:/data
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+      - drfstarter_production_redis_data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD} # Correctly pass password from env var
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD} # Ensure Redis password is passed correctly
     env_file:
-      - .env.prod
+      - .env.prod # Make sure the .env.prod file is loaded
     restart: always
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"] # Correctly pass password to the healthcheck
       interval: 10s
       timeout: 5s
       retries: 5
@@ -80,11 +85,7 @@ services:
         max-size: "10m"
         max-file: "3"
 
-secrets:
-  postgres_password:
-    file: ./secrets/postgres_password.txt
-
 volumes:
-  starterdrf_prod_postgres_data:
-  starterdrf_prod_postgres_data_backups:
-  starterdrf_prod_redis_data:
+  drfstarter_production_postgres_data:
+  drfstarter_production_postgres_data_backups:
+  drfstarter_production_redis_data:

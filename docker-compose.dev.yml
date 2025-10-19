@@ -14,6 +14,10 @@ services:
       - .:/app:z
     env_file:
       - .env
+    environment:
+      - DJANGO_ENV=production
+      - pb=${pb:-default_value}
+      - DJANGO_SETTINGS_MODULE=config.settings.dev
     ports:
       - "5000:8000"
     command: /start

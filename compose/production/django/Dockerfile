@@ -1,68 +1,52 @@
-FROM docker.io/python:3.11-slim-bookworm AS python
+FROM python:3.11.12-slim-bullseye
 
-FROM python AS python-build-stage
+# Set environment variables for Python and Django
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100 \
+    DJANGO_SETTINGS_MODULE=config.settings.prod
 
-ARG BUILD_ENVIRONMENT=local
+# set work directory early
+WORKDIR /app
 
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    build-essential \
-    libpq-dev
-
-COPY ./requirements .
-
-RUN pip wheel --wheel-dir /usr/src/app/wheels \
-    -r ${BUILD_ENVIRONMENT}.txt
-
-FROM python AS python-run-stage
-
-ARG BUILD_ENVIRONMENT=local
-ARG APP_HOME=/app
-
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV BUILD_ENV=${BUILD_ENVIRONMENT}
-
-WORKDIR ${APP_HOME}
-
-# devcontainer dependencies and utils
-RUN apt-get update && apt-get install --no-install-recommends -y \
-  sudo git bash-completion nano ssh
-
-# Create devcontainer user and add it to sudoers
-RUN groupadd --gid 1000 dev-user \
-  && useradd --uid 1000 --gid dev-user --shell /bin/bash --create-home dev-user \
-  && echo dev-user ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/dev-user \
-  && chmod 0440 /etc/sudoers.d/dev-user
-
-# Install required system dependencies
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN apt-get update \
   # psycopg dependencies
-  libpq-dev \
-  wait-for-it \
-  # Translations dependencies
-  gettext \
+  && apt-get install -y libpq-dev \
+  # Translations dependencies (if not needed, remove)
+  && apt-get install -y gettext \
+  # Additional dependencies (if git is not required in production, remove)
+  && apt-get install -y git \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
-# All absolute dir copies ignore workdir instruction. All relative dir copies are wrt to the workdir instruction
-# copy python dependency wheels from python-build-stage
-COPY --from=python-build-stage /usr/src/app/wheels /wheels/
 
-# use wheels to install python dependencies
-RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
-  && rm -rf /wheels/
+# Copy requirements and install
+COPY ./requirements ./requirements
+RUN pip install --upgrade pip && \
+    pip install -r requirements/production.txt
 
 COPY ./compose/production/django/entrypoint /entrypoint
-RUN sed -i 's/\r$//g' /entrypoint
-RUN chmod +x /entrypoint
+COPY ./compose/production/django/start /start
+RUN dos2unix /entrypoint /start || sed -i 's/\r$//g' /entrypoint /start \
+ && chmod +x /entrypoint /start
 
-COPY ./compose/local/django/start /start
-RUN sed -i 's/\r$//g' /start
-RUN chmod +x /start
+COPY ./compose/production/django/celery/worker/start /start-celeryworker
+RUN sed -i 's/\r$//g' /start-celeryworker
+RUN chmod +x /start-celeryworker
 
+COPY ./compose/production/django/celery/beat/start /start-celerybeat
+RUN sed -i 's/\r$//g' /start-celerybeat
+RUN chmod +x /start-celerybeat
 
-# copy application code to WORKDIR
-COPY . ${APP_HOME}
+COPY ./compose/production/django/celery/flower/start /start-flower
+RUN sed -i 's/\r$//g' /start-flower
+RUN chmod +x /start-flower
 
+# Copy project (optional, if not using bind mounts)
+COPY . /app/
+
+# Run Django dev server (use host=0.0.0.0 so it works inside Docker)
 ENTRYPOINT ["/entrypoint"]
